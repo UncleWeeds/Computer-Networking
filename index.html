@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Client</title>
+</head>
+<body>
+    <b>I am the king of the pirates!! Monkey D Luffy</b>
+  <script>
+    const ws = new WebSocket('ws://localhost:3000');
+
+    ws.onopen = () => {
+      console.log('Connected to the server');
+      ws.send('Hello, server!');
+    };
+
+    ws.onmessage = (event) => {
+      console.log(`Received from server: ${event.data}`);
+    };
+  </script>
+</body>
+</html>
