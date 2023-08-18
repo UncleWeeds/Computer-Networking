@@ -6,18 +6,41 @@
   <title>Chat Client</title>
 </head>
 <body>
-    <b>I am the king of the pirates!! Monkey D Luffy</b>
+
+  <div id="chatbox" style="height: 300px; overflow: auto; border: 1px solid black; padding: 10px;"></div>
+  <input id="messageInput" type="text" placeholder="Type your message...">
+  <button onclick="sendMessage()">Send</button>
+   
   <script>
     const ws = new WebSocket('ws://localhost:3000');
 
+    function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const message = input.value;
+      ws.send(message);
+      input.value = ''; 
+    }
+
     ws.onopen = () => {
       console.log('Connected to the server');
-      ws.send('Hello, server!');
     };
 
     ws.onmessage = (event) => {
-      console.log(`Received from server: ${event.data}`);
-    };
+  if (event.data === 'Please enter your name:') {
+    const name = prompt('Please enter your name:');
+    ws.send(name);
+    ws.name = name;
+    return;
+  }
+  const chatbox = document.getElementById('chatbox');
+  if (event.data.startsWith(`${ws.name}:`)) {
+    chatbox.innerHTML += `<p>You: ${event.data.split(': ')[1]}</p>`; 
+  } else {
+    chatbox.innerHTML += `<p>${event.data}</p>`; 
+  }
+
+  chatbox.scrollTop = chatbox.scrollHeight; 
+};
   </script>
 </body>
 </html>
