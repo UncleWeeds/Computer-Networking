@@ -24,11 +24,9 @@ function reportNetworkUsage() {
   console.log(`Total bytes received: ${totalBytesReceived}`);
 }
 
-function broadcast(message, sender) {
+function broadcast(message) {
   wss.clients.forEach((client) => {
-    if (client !== sender && client.readyState === WebSocket.OPEN) {
       client.send(message);
-    }
   });
 }
 
@@ -36,6 +34,7 @@ function broadcast(message, sender) {
 wss.on('connection', (ws) => {
   console.log('Client connected');
   clientCount++;
+  broadcast(`A new client has joined the chat room as Guest.`);
 
   ws.name = 'Guest'; 
 
@@ -55,6 +54,12 @@ wss.on('connection', (ws) => {
     totalBytesReceived += Buffer.from(message).length;
   
     broadcast(chatMessage);
+  });
+
+  ws.on('close', () => {
+    console.log('Client disconnected');
+    clientCount--;
+    broadcast(`${ws.name} has left the chat room.`);
   });
 });
 
