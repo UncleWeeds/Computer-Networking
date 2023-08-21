@@ -22,16 +22,25 @@
     }
 
     ws.onopen = () => {
+      const username = prompt('Please enter your username:');
+      const password = prompt('Please enter your password:');
+      ws.send(`${username}:${password}`);
       console.log('Connected to the server');
     };
 
     ws.onmessage = (event) => {
-  if (event.data === 'Please enter your name:') {
+    if (event.data === 'Authentication successful, please enter your name:') {
     const name = prompt('Please enter your name:');
     ws.send(name);
     ws.name = name;
     return;
+    }
+
+    if (event.data.startsWith(`${ws.name} joined the chat.`)) {
+    chatbox.innerHTML += `<p>${event.data}</p>`; // Handle join message
+    return;
   }
+  
   const chatbox = document.getElementById('chatbox');
   if (event.data.startsWith(`${ws.name}:`)) {
     chatbox.innerHTML += `<p>You: ${event.data.split(': ')[1]}</p>`; 
